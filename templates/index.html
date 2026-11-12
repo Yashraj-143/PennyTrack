@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PennyTrack | Student Finance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <h2>PennyTrack<span>.</span></h2>
+            <p class="tagline">STUDENT FINANCE</p>
+
+            <nav>
+                <a class="active" href="/">Dashboard</a>
+                <a href="#transactions">Transactions</a>
+                <a href="#analytics">Analytics</a>
+            </nav>
+
+            <p class="sidebar-footer">Personal Finance Manager</p>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">YOUR MONEY, YOUR CONTROL</p>
+                    <h1>Dashboard</h1>
+                    <p>Welcome back! Here's your financial overview.</p>
+                </div>
+                <button id="openModal">+ Add Transaction</button>
+            </header>
+
+            <section class="summary-grid">
+
+                <div class="summary-card">
+                    <p>Total Balance</p>
+                    <h2 id="balance">₹8,450</h2>
+                    <small>Available balance</small>
+                </div>
+
+                <div class="summary-card">
+                    <p>Total Income</p>
+                    <h2 id="income">₹10,000</h2>
+                    <small>This month</small>
+                </div>
+
+                <div class="summary-card">
+                    <p>Total Expenses</p>
+                    <h2 id="expenses">₹1,550</h2>
+                    <small>This month</small>
+                </div>
+
+            </section>
+
+            <section class="panel chart-panel" id="analytics">
+                <p class="eyebrow">FINANCIAL OVERVIEW</p>
+                <h2>Income vs Expenses</h2>
+                <canvas id="expenseChart"></canvas>
+            </section>
+
+            <!-- Monthly Financial Report -->
+
+            <section class="panel" id="monthlyReport">
+
+                <div class="report-header">
+
+                    <div>
+                        <p class="eyebrow">FINANCIAL ANALYSIS</p>
+                        <h2>Monthly Financial Report</h2>
+                        <p class="report-description">
+                            Understand your monthly financial performance.
+                        </p>
+                    </div>
+
+                    <input type="month" id="reportMonth">
+
+                </div>
+
+
+                <!-- Monthly Summary Cards -->
+
+                <div class="report-grid">
+
+                    <div class="report-card">
+                        <p>Total Income</p>
+                        <h3 id="reportIncome">₹0</h3>
+                    </div>
+
+                    <div class="report-card">
+                        <p>Total Expenses</p>
+                        <h3 id="reportExpenses">₹0</h3>
+                    </div>
+
+                    <div class="report-card">
+                        <p>Net Savings</p>
+                        <h3 id="reportSavings">₹0</h3>
+                    </div>
+
+                    <div class="report-card">
+                        <p>Savings Rate</p>
+                        <h3 id="reportSavingsRate">0%</h3>
+                    </div>
+
+                </div>
+
+
+                <!-- Category Breakdown -->
+
+                <div class="category-report">
+
+                    <h3>Expense Breakdown</h3>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Total Spent</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="categoryReportList"></tbody>
+
+                    </table>
+
+                    <p id="reportEmptyMessage" class="empty-message" hidden>
+                        No expenses recorded for this month.
+                    </p>
+
+                </div>
+
+            </section>
+
+            <section class="panel" id="transactions">
+
+                <div class="transaction-header">
+                    <div>
+                        <p class="eyebrow">YOUR MONEY ACTIVITY</p>
+                        <h2>Transaction History</h2>
+                    </div>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="filter-controls">
+
+                    <input type="text" id="searchInput" placeholder="Search transactions...">
+
+                    <select id="typeFilter">
+                        <option value="all">All Transactions</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expenses</option>
+                    </select>
+
+                    <select id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="Food">Food</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Education">Education</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Allowance">Allowance</option>
+                        <option value="Other">Other</option>
+                    </select>
+
+                </div>
+
+                <!-- Transactions Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Transaction</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="transactionList"></tbody>
+                </table>
+
+                <p id="emptyMessage" class="empty-message" hidden>
+                    No matching transactions found.
+                </p>
+
+            </section>
+
+
+        </main>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal" id="transactionModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">PENNYTRACK</p>
+                    <h2>Add Transaction</h2>
+                </div>
+
+                <button type="button" class="close-button" id="closeModal">
+                    &times;
+                </button>
+            </div>
+
+            <form id="transactionForm">
+
+                <label for="title">Transaction Title</label>
+                <input type="text" id="title" placeholder="e.g. College lunch" required>
+
+                <label for="type">Transaction Type</label>
+                <select id="type" required>
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                </select>
+
+                <label for="category">Category</label>
+                <select id="category" required>
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Education">Education</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Allowance">Allowance</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label for="amount">Amount (₹)</label>
+                <input type="number" id="amount" placeholder="Enter amount" min="0.01" step="0.01" required>
+
+                <label for="date">Date</label>
+                <input type="date" id="date" required>
+
+                <button type="submit" class="save-button">
+                    Save Transaction
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
